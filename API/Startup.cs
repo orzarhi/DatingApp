@@ -19,6 +19,8 @@ namespace API
     public class Startup
     {
         private readonly IConfiguration _config;
+        private readonly string _policyName = "CorsPolicy";
+
         public Startup(IConfiguration config)
         {
             _config = config;
@@ -33,6 +35,13 @@ namespace API
             });
 
 
+            services.AddCors((setup) =>
+            {
+                setup.AddPolicy("default", (options) =>
+                {
+                    options.AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin();
+                });
+            });
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -49,6 +58,8 @@ namespace API
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "WebAPIv5 v1"));
             }
+
+            app.UseCors("default");
 
             app.UseHttpsRedirection();
 
